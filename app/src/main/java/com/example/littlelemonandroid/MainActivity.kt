@@ -1,19 +1,18 @@
 package com.example.littlelemonandroid
 
 import android.os.Bundle
-import com.example.littlelemonandroid.Onboarding
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.littlelemonandroid.NavigationComposable
 import com.example.littlelemonandroid.ui.theme.LittleLemonAndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +25,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Onboarding() // Call your Onboarding Composable here
+                    Onboarding(navController=rememberNavController()) // Call your Onboarding Composable here
+                    val navController = rememberNavController()
+                    val navigationComposable = NavigationComposable(navController = navController)
                 }
             }
         }

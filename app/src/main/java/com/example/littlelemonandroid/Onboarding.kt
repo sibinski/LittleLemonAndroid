@@ -1,5 +1,7 @@
 package com.example.littlelemonandroid
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -16,12 +19,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+
 
 @Composable
-fun Onboarding() {
+fun Onboarding(navController: NavHostController) {
+    val context = LocalContext.current
+    val userProfile = null
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +55,7 @@ fun Onboarding() {
         TextField(
             value = firstName,
             onValueChange = { newValue -> firstName = newValue },
-            label = { Text("Please insert your first name") },
+            label = { Text("First name: ") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp)) // Spacer below First Name
@@ -55,7 +65,7 @@ fun Onboarding() {
         TextField(
             value = lastName,
             onValueChange = { newValue -> lastName = newValue },
-            label = { Text("Please insert your last name") },
+            label = { Text("Last name: ") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp)) // Spacer below Last Name
@@ -65,12 +75,12 @@ fun Onboarding() {
         TextField(
             value = email,
             onValueChange = { newValue -> email = newValue },
-            label = { Text("Please insert your email") },
+            label = { Text("Email: ") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp)) // Spacer below Email
 
-        // Password TextField
+        /* Password TextField
         var password by remember { mutableStateOf("") }
         TextField(
             value = password,
@@ -79,28 +89,43 @@ fun Onboarding() {
             modifier = Modifier.fillMaxWidth()
         )
 
+
         // Spacer before Register Button
         Spacer(modifier = Modifier.height(24.dp))
 
+        */
         // Register Button
-        Button(
-            onClick = {
-                // Handle button click action here (e.g., registration logic)
-                println("Register button clicked!")
-                println("First Name: $firstName")
-                println("Last Name: $lastName")
-                println("Email: $email")
-                println("Password: $password")
-                // You would likely want to pass these values to a registration function
+        Button(onClick = {
+            if (firstName.isEmpty() && lastName.isEmpty() && email.isEmpty()) {
+                Toast.makeText(context,
+                    "Registration unsuccessful. Please enter all data.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                val sharedPreferences = context.getSharedPreferences(userProfile, Context.MODE_PRIVATE)
+                sharedPreferences.edit(commit = true) { putString("FIRST_NAME", firstName) }
+                sharedPreferences.edit(commit = true) { putString("LAST_NAME", lastName) }
+                sharedPreferences.edit(commit = true) { putString("EMAIL", email) }
+
+                Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                navController.navigate(Home.route)
             }
-        ) {
-            Text("Register")
+
+        }) {
+            Text("Register", style = MaterialTheme.typography.labelLarge
+            )
         }
+
     }
 }
+
+fun isValidEmail(email: String): Boolean {
+    return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun OnboardingPreview() {
-    Onboarding()
+    Onboarding(rememberNavController())
 }
