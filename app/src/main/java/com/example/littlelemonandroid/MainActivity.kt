@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.example.littlelemonandroid.NavigationComposable
 import com.example.littlelemonandroid.ui.theme.LittleLemonAndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,6 +24,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     Onboarding(navController=rememberNavController()) // Call your Onboarding Composable here
                     val navController = rememberNavController()
                     val navigationComposable = NavigationComposable(navController = navController)
