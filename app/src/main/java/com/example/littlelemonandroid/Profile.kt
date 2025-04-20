@@ -60,9 +60,9 @@ fun Profile(navController: NavHostController) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text("Your profile: ")
-        Text("Your first name: $firstName")
-        Text("Your last name: $lastName")
-        Text("Your email: $email")
+        Text("First name: $firstName")
+        Text("Last name: $lastName")
+        Text("Email: $email")
         Button(onClick = {
                 sharedPreferences.edit { clear() }
 

@@ -31,7 +31,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun Onboarding(navController: NavHostController) {
     val context = LocalContext.current
-    val userProfile = null
+    val userProfile = USER_PROFILE
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,7 +47,7 @@ fun Onboarding(navController: NavHostController) {
                 .padding(bottom = 16.dp) // Spacer below logo
         )
         Spacer(modifier = Modifier.height(8.dp)) // Spacer before instruction text
-        Text(text = "Please insert information about yourself next!")
+        Text(text = "Please insert information about yourself!")
         Spacer(modifier = Modifier.height(16.dp)) // Spacer after instruction text
 
         // First Name TextField
@@ -103,9 +103,9 @@ fun Onboarding(navController: NavHostController) {
                 ).show()
             } else {
                 val sharedPreferences = context.getSharedPreferences(userProfile, Context.MODE_PRIVATE)
-                sharedPreferences.edit(commit = true) { putString("FIRST_NAME", firstName) }
-                sharedPreferences.edit(commit = true) { putString("LAST_NAME", lastName) }
-                sharedPreferences.edit(commit = true) { putString("EMAIL", email) }
+                sharedPreferences.edit(commit = true) { putString(FIRST_NAME, firstName) }
+                sharedPreferences.edit(commit = true) { putString(LAST_NAME, lastName) }
+                sharedPreferences.edit(commit = true) { putString(EMAIL, email) }
 
                 Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                 navController.navigate(Home.route)
