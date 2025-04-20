@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.core.content.edit
 
 @Composable
 fun Profile(navController: NavHostController) {
@@ -48,7 +49,7 @@ fun Profile(navController: NavHostController) {
         Text(text = "User's las name: $lastName")
         Text(text = "User's email: $email")
         Button(onClick = {
-                sharedPreferences.edit().clear().apply()
+                sharedPreferences.edit { clear() }
 
                 navController.navigate(Onboarding.route) {
                     popUpTo(Onboarding.route) { inclusive = true }
