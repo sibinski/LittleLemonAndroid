@@ -1,5 +1,6 @@
 package com.example.littlelemonandroid
 
+import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,7 +29,7 @@ data class MenuItemNetwork(
     )
 
     data class MenuItemRoom(
-        val id: Int,
+        @PrimaryKey val id: Int,
         val title: String,
         val price: Double,
         val desc: String,

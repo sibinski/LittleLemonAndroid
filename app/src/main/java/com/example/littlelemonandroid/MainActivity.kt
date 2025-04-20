@@ -1,6 +1,5 @@
 package com.example.littlelemonandroid
 
-import com.example.littlelemonandroid.MenuNetwork // Adjust the import path if your package structure is different
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
@@ -23,9 +21,8 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.remember
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val httpClient = HttpClient(Android) {
@@ -64,9 +61,11 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
-                ) {
+                )
+
+                {
                     val navController = rememberNavController()
-                    NavigationComposable(navController = navController)
+                    NavigationComposable(navController = navController, database = database)
                 }
             }
         }
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-        fun saveMenuToDatabase(menuItemsNetworkList: List<MenuItemNetwork>) {
+        suspend fun saveMenuToDatabase(menuItemsNetworkList: List<MenuItemNetwork>) {
             val menuItemsRoomList = menuItemsNetworkList.map { networkItem ->
                 MenuItemRoom(
                     id = networkItem.id,
@@ -107,6 +106,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 fun MenuItemNetwork.toMenuItemRoom(): MenuItemRoom {
     return MenuItemRoom(
         id = this.id,

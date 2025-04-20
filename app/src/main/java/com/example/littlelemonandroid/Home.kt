@@ -9,17 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,22 +31,18 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.example.littlelemonandroid.MenuItemNetwork.MenuItemRoom
-import com.example.littlelemonandroid.MenuItemNetwork
-import com.example.littlelemonandroid.Profile
-import com.example.littlelemonandroid.R
 import java.text.NumberFormat
+import androidx.compose.foundation.lazy.items
+
 
 
 @Composable
@@ -118,10 +113,9 @@ fun MenuItems(menuItem: MenuItemRoom) {
     }
 }
 
-
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Home(navController: NavHostController, menuItems: List<MenuItemNetwork>) {
+fun Home(navController: NavHostController, menuItems: List<com.example.littlelemonandroid.MenuItemRoom>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -131,18 +125,16 @@ fun Home(navController: NavHostController, menuItems: List<MenuItemNetwork>) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.TopEnd), // Align to the top and end (right)
-            horizontalArrangement = Arrangement.End, // Ensure content is at the end
+                .align(Alignment.TopEnd),
+            horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = R.drawable.profile),
                 contentDescription = "Profile",
                 modifier = Modifier
-                    .size(48.dp) // Adjust size as needed
-                    .clickable {
-                        navController.navigate(Profile.route) // Navigate to the Profile screen
-                    }
+                    .size(48.dp)
+                    .clickable { navController.navigate(Profile.route) }
             )
         }
 
@@ -150,72 +142,51 @@ fun Home(navController: NavHostController, menuItems: List<MenuItemNetwork>) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.TopCenter), // Align to the top center
+                .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
-                modifier = Modifier.size(150.dp) // Adjust size as needed
+                modifier = Modifier.size(150.dp)
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
         }
 
-
-        // Welcome Text (Middle of the screen)
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .align(Alignment.Center), // Align the Box to the center
-            horizontalAlignment = Alignment.Start, // Center the content
-            verticalArrangement = Arrangement.Center
+                .padding(top = 200.dp) // Adjust top padding to be below logo
         ) {
+            // Welcome and Hero Section
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = "Little Lemon")
+                Text(text = "Chicago")
+                Image(
+                    painter = painterResource(id = R.drawable.heroimage),
+                    contentDescription = "Hero Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                Text(
+                    text = "We are a family-owned Mediterranean restaurant, focused on traditional recipes served with a modern twist",
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "Menu") // Add a title for the menu
+            }
 
-            Image(
-                painter = painterResource(id = R.drawable.heroimage),
-                contentDescription = "Hero Image",
-                modifier = Modifier
-                    .fillMaxHeight(0.30F)
-                    .align(Alignment.End)
-                    .clip(RoundedCornerShape(10.dp))
-            )
-            Text(text = "Little Lemon")
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Chicago")
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "We are a family-owned Mediterranean restaurant, focused on traditional recipes served with a modern twist",
-            )
-
-
+            // Menu Items Display
+            LazyColumn {
+                items(menuItems) { item ->
+                    MenuItems(menuItem = item)
+                }
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
-}
-@Preview(showBackground = true)
-@Composable
-fun HomePreview() {
-    val navController = rememberNavController()
-    val sampleMenuItems = listOf(
-        MenuItemNetwork(
-            id = 1,
-            title = "Hummus",
-            description = "A delicious chickpea dip",
-            price = "7.99",
-            image = "hummus.jpg",
-            category = "starters"
-        ),
-        MenuItemNetwork(
-            id = 2,
-            title = "Falafel",
-            description = "Crispy fried chickpea patties",
-            price = "6.49",
-            image = "falafel.jpg",
-            category = "starters"
-        )
-    )
-    Home(navController = navController, menuItems = sampleMenuItems)
 }
