@@ -1,5 +1,6 @@
 package com.example.littlelemonandroid
 
+import com.example.littlelemonandroid.MenuNetwork // Adjust the import path if your package structure is different
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +24,8 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.remember
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
     private val httpClient = HttpClient(Android) {
@@ -29,6 +33,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val menuUrl = "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json"
+    private val _menuItems = MutableStateFlow<List<MenuItemNetwork>>(emptyList())
+    val menuItems = _menuItems
 
     @Database(entities = [AppDatabase::class], version = 1)
     abstract class AppDatabase : RoomDatabase() {
@@ -42,6 +49,14 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    suspend fun fetchMenu(httpClient: HttpClient): List<MenuItemNetwork> {
+        val url =
+            "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json"
+        val response = httpClient.get(url).body<MenuNetwork>()
+        return response.menuItems
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -50,19 +65,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navHostController = rememberNavController()
-                    Onboarding(navController = navHostController)
-                    Profile(navController = navHostController)
+                    val navController = rememberNavController()
+                    NavigationComposable(navController = navController)
                 }
             }
         }
+    }
 
-        suspend fun fetchMenu(httpClient: HttpClient): List<MenuItemNetwork> {
-            val url =
-                "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json"
-            val response = httpClient.get(url).body<MenuNetwork>()
-            return response.menuItems
-        }
+
 
 
         fun saveMenuToDatabase(menuItemsNetworkList: List<MenuItemNetwork>) {
@@ -93,7 +103,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-}
+
 
 
 

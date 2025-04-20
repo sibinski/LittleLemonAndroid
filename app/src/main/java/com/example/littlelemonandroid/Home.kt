@@ -1,3 +1,4 @@
+package com.example.littlelemonandroid
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -119,7 +121,7 @@ fun MenuItems(menuItem: MenuItemRoom) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Home(navController: NavHostController) {
+fun Home(navController: NavHostController, menuItems: List<MenuItemNetwork>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -187,9 +189,8 @@ fun Home(navController: NavHostController) {
             Text(
                 text = "We are a family-owned Mediterranean restaurant, focused on traditional recipes served with a modern twist",
             )
-            MenuItems(
-                menuItem = TODO()
-            )
+
+
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -197,5 +198,24 @@ fun Home(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
-    Home(rememberNavController())
+    val navController = rememberNavController()
+    val sampleMenuItems = listOf(
+        MenuItemNetwork(
+            id = 1,
+            title = "Hummus",
+            description = "A delicious chickpea dip",
+            price = "7.99",
+            image = "hummus.jpg",
+            category = "starters"
+        ),
+        MenuItemNetwork(
+            id = 2,
+            title = "Falafel",
+            description = "Crispy fried chickpea patties",
+            price = "6.49",
+            image = "falafel.jpg",
+            category = "starters"
+        )
+    )
+    Home(navController = navController, menuItems = sampleMenuItems)
 }
