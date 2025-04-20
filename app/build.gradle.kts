@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "1.5.21"
+
 }
 
 android {
@@ -42,6 +44,7 @@ android {
 dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation ("androidx.navigation:navigation-compose:2.8.9")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.3") // You might have this already, but ensure it's there
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
