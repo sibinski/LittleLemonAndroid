@@ -1,13 +1,16 @@
 package com.example.littlelemonandroid
+
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,21 +23,32 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.core.content.edit
+import java.util.prefs.Preferences
 
 @Composable
 fun Profile(navController: NavHostController) {
+
     // Header section
-    Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "App Logo",
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .padding(bottom = 46.dp) // Spacer below logo
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(text = "Profile information:")
-    Spacer(modifier = Modifier.height(16.dp))
+            .align(Alignment.TopCenter), // Align to the top center
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "Logo",
+            modifier = Modifier.size(150.dp) // Adjust size as needed
+        )
+    }
+        Spacer(modifier = Modifier.height(16.dp))
+
+    }
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences(USER_PROFILE, Context.MODE_PRIVATE)
     val firstName = sharedPreferences.getString(FIRST_NAME, "") ?: ""
@@ -45,9 +59,10 @@ fun Profile(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "User's first name: $firstName")
-        Text(text = "User's las name: $lastName")
-        Text(text = "User's email: $email")
+        Text("Your profile: ")
+        Text("Your first name: $firstName")
+        Text("Your last name: $lastName")
+        Text("Your email: $email")
         Button(onClick = {
                 sharedPreferences.edit { clear() }
 
