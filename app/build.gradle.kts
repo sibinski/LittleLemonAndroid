@@ -42,6 +42,18 @@ android {
 }
 
 dependencies {
+    implementation(libs.bumptech.glide.compose)
+    implementation(libs.bumptech.glide.core)
+    implementation(libs.bumptech.glide.annotationProcessor)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.foundation:foundation-layout")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation ("androidx.navigation:navigation-compose:2.8.9")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.3") // You might have this already, but ensure it's there
