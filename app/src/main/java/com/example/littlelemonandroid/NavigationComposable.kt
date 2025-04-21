@@ -2,34 +2,30 @@ package com.example.littlelemonandroid
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-
+import com.example.littlelemonandroid.Home
+import com.example.littlelemonandroid.Onboarding
+import com.example.littlelemonandroid.Profile
 
 @Composable
-fun NavigationComposable(navController: NavHostController) {
+fun NavigationComposable(navController: NavHostController, database: AppDatabase) { // Use the top-level AppDatabase
     val storedData = storedDataInSharedPreferences()
+    val menuItems: State<List<MenuItemRoom>> = database.menuItemDao().getAllMenuItems().collectAsState(initial = emptyList())
 
     NavHost(
         navController = navController,
-        startDestination = if (storedData) Home.route else Onboarding.route // Corrected startDestination logic
+        startDestination = if (storedData) Home.route else Onboarding.route
     ) {
         composable(Onboarding.route) {
             Onboarding(navController = navController)
         }
         composable(Home.route) {
-            val sampleMenuItems = remember { // Remember the list across recompositions
-                listOf(
-                    MenuItemNetwork(1, "Hummus", "Chickpea dip", "7.99", "hummus.jpg", "starters"),
-                    MenuItemNetwork(2, "Falafel", "Fried chickpea patties", "6.49", "falafel.jpg", "starters")
-                    // Add more sample items if needed for preview/testing
-                )
-            }
-            Home(navController = navController, menuItems = sampleMenuItems) // Use the passed navController and provide sample data
+            Home(navController = navController, menuItems = menuItems.value)
         }
         composable(Profile.route) {
             Profile(navController = navController)
@@ -40,9 +36,9 @@ fun NavigationComposable(navController: NavHostController) {
 @Composable
 fun storedDataInSharedPreferences(): Boolean {
     val context = LocalContext.current
-    val userProfile = null
+    val userProfile = "user_profile_data"
     val sharedPreferences = context.getSharedPreferences(userProfile, Context.MODE_PRIVATE)
-    val userEmail = null
+    val userEmail = "EMAIL"
     val email = sharedPreferences.getString(userEmail, "") ?: ""
     return email.isNotBlank()
 }

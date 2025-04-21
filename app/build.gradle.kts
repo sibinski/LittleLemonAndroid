@@ -2,7 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    //alias(libs.plugins.kotlin.kapt)
     kotlin("plugin.serialization") version "1.5.21"
+    //id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
+    alias(libs.plugins.ksp)
+
+
 
 }
 
@@ -42,10 +47,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.bumptech.glide.compose)
-    implementation(libs.bumptech.glide.core)
-    //implementation(libs.bumptech.glide.annotationProcessor)
-    implementation("androidx.compose.ui:ui")
+    implementation (libs.bumptech.glide.compose)
+    implementation (libs.bumptech.glide.core)
+    ksp(libs.bumptech.glide.annotationProcessor)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Use the latest version    implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -87,10 +92,11 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.3")
 
     implementation("androidx.room:room-runtime:2.4.3")
-    //kapt("androidx.room:room-compiler:2.4.3")
-
-    //implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
-
+    ksp("androidx.room:room-compiler:2.4.3")
+    implementation("androidx.room:room-ktx:2.4.3")
+    val glide_version = "4.16.0" // Use the Glide version you have
+    ksp("com.github.bumptech.glide:compose:1.0.0-alpha.1")
+    implementation("com.github.bumptech.glide:glide:$glide_version")
     implementation("androidx.compose.runtime:runtime-livedata:1.3.2")
 
     implementation("androidx.compose.material:material-icons-extended")
