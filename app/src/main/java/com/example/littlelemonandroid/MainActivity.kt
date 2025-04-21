@@ -20,42 +20,46 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
     private val httpClient = HttpClient(Android) {
-        install(ContentNegotiation) {
+        install(ContentNegotiation) {        json(Json {
+            ignoreUnknownKeys = true // If your JSON response has extra fields
+            isLenient = true        // Allow malformed JSON (if needed, but be cautious)
+
+        })
         }
     }
 
-    private val menuUrl = "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json"
-    private val _menuItems = MutableStateFlow<List<MenuItemNetwork>>(emptyList())
-    val menuItems = _menuItems
 
-    @Database(entities = [AppDatabase::class], version = 1)
-    abstract class AppDatabase : RoomDatabase() {
-        abstract fun menuItemDao(): MenuItemDao
-    }
 
-    private val database by lazy {
-        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "little-lemon")
-            .fallbackToDestructiveMigration()
-            .build()
-    }
+    private val database by lazy { AppDatabase.getInstance(applicationContext) }
+
 
 
     suspend fun fetchMenu(httpClient: HttpClient): List<MenuItemNetwork> {
         val url =
             "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json"
-        val response = httpClient.get(url).body<MenuNetwork>()
-        return response.menuItems
+        return try {
+            val response = httpClient.get(url).body<MenuNetwork>()
+            response.menuItems
+        } catch (e: Exception) {
+            // Log the error
+            android.util.Log.e("MainActivity", "Error fetching menu: ${e.localizedMessage}", e)
+            emptyList() // Or handle the error as appropriate for your app
+        }
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        loadMenuIfNeeded()
+
         setContent {
             LittleLemonAndroidTheme {
                 Surface(
@@ -74,33 +78,34 @@ class MainActivity : ComponentActivity() {
 
 
 
-        suspend fun saveMenuToDatabase(menuItemsNetworkList: List<MenuItemNetwork>) {
-            val menuItemsRoomList = menuItemsNetworkList.map { networkItem ->
-                MenuItemRoom(
-                    id = networkItem.id,
-                    title = networkItem.title,
-                    desc = networkItem.description,
-                    price = networkItem.price,
-                    image = networkItem.image,
-                    category = networkItem.category
-                )
-            }
-            database.menuItemDao().insertAll(menuItemsRoomList)
-
-            fun loadMenuIfNeeded() {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    if (database.menuItemDao().equals(0)) {
-                        val menuItemsNetworkList = fetchMenu(httpClient)
-                        saveMenuToDatabase(menuItemsNetworkList)
-                    }
+    suspend fun saveMenuToDatabase(menuItemsNetworkList: List<MenuItemNetwork>) {
+        val menuItemsRoomList = menuItemsNetworkList.map { networkItem -> MenuItemRoom(
+                id = networkItem.id,
+                title = networkItem.title,
+                desc = networkItem.description,
+                price = networkItem.price,
+                image = networkItem.image,
+                category = networkItem.category
+            )
+        }
+        database.menuItemDao().insertAll(menuItemsRoomList) // Line 78
+    }
+    fun loadMenuIfNeeded() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                if (database.menuItemDao().countMenuItems() == 0) { // Use countMenuItems()
+                    val menuItemsNetworkList = fetchMenu(httpClient)
+                    saveMenuToDatabase(menuItemsNetworkList)
                 }
+            } catch (e: Exception) {
+                android.util.Log.e("MainActivity", "Error during loadMenuIfNeeded: ${e.localizedMessage}", e)
+                // Handle the error
             }
-
-
-
-
         }
     }
+    }
+
+
 
 
 

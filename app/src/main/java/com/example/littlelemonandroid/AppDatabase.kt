@@ -11,27 +11,7 @@ import androidx.room.RoomDatabase
 import kotlinx.coroutines.flow.Flow
 import androidx.room.Room
 
-@Entity(tableName = "menu_items")
-data class MenuItemRoom(
-    @PrimaryKey val id: Int,
-    val title: String,
-    val desc: String,
-    val price: String,
-    val image: String,
-    val category: String
-)
 
-@Dao
-interface MenuItemDao {
-    @Query("SELECT * FROM menu_items")
-    fun getAllMenuItems(): Flow<List<MenuItemRoom>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(menuItems: List<MenuItemRoom>)
-
-    @Query("SELECT COUNT(id) FROM menu_items")
-    suspend fun countMenuItems(): Int
-}
 
 @Database(entities = [MenuItemRoom::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -54,4 +34,27 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
     }
+}
+
+
+@Entity(tableName = "menu_items")
+data class MenuItemRoom(
+    @PrimaryKey val id: Int,
+    val title: String,
+    val desc: String,
+    val price: String,
+    val image: String,
+    val category: String
+)
+
+@Dao
+interface MenuItemDao {
+    @Query("SELECT * FROM menu_items")
+    fun getAllMenuItems(): Flow<List<MenuItemRoom>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(menuItems: List<MenuItemRoom>)
+
+    @Query("SELECT COUNT(id) FROM menu_items")
+    suspend fun countMenuItems(): Int
 }
